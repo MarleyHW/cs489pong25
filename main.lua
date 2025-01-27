@@ -1,4 +1,5 @@
 local Player = require "Player"
+local Ball = require "Ball"
 
 windowWidth = 800
 windowHeight = 600
@@ -9,16 +10,45 @@ function love.load()
     windowWidth, windowHeight = love.graphics.getDimensions()
     gameState = "start"
 
+    math.randomseed(os.time()) --random seed
+
     scoreFont = love.graphics.newFont(56)
     mainFont = love.graphics.newFont(28)
 
     player1 = Player(25)
     player2 = Player(windowWidth-35)
+    ball = Ball()
 
 end
 
 -- Update our variables in the game loop
 function love.update(dt)
+    if gameState == "play" then
+        player1:update(dt)
+        player2:update(dt)
+        ball:update(dt)
+
+        if love.keyboard.isDown("w") then
+            player1:moveUp(dt)
+        elseif love.keyboard.isDown("s") then
+            player1:moveDown(dt)
+        end
+            
+        if love.keyboard.isDown("up") then
+            player2:moveUp(dt)
+        elseif love.keyboard.isDown("down") then
+            player2:moveDown(dt)
+        end
+
+        if ball.x < 0 then
+            player2:scoreUp()
+            ball:reset()
+        elseif ball.x > windowWidth then
+            player1:scoreUp()
+            ball:reset()
+        end
+    end
+
 end
 
 -- Draw here
@@ -28,16 +58,13 @@ function love.draw()
         love.graphics.printf("Press Enter to Start \n or Escape to Exit",
         mainFont,0,170,windowWidth,"center")
     elseif gameState == "play"then
-    --                filled rect, x, y, width, height
-        --love.graphics.rectangle("fill",25,windowHeight/2-40,10,80)
-        --love.graphics.rectangle("fill",windowWidth-25,windowHeight/2,10,80)
         player1:draw()
         player2:draw()
 
-        love.graphics.rectangle("fill",windowWidth/2-5,windowHeight/2-5,10,10)
+        ball:draw()
 
-        love.graphics.print("0",scoreFont,windowWidth/2-140,40)
-        love.graphics.print("0",scoreFont,windowWidth/2+100,40)
+        love.graphics.print(player1.score,scoreFont,windowWidth/2-140,40)
+        love.graphics.print(player2.score,scoreFont,windowWidth/2+100,40)
     end
 
     love.graphics.setLineWidth(5)
