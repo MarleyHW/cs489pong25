@@ -34,4 +34,18 @@ function Ball:update(dt)
     self.y = self.y + self.speedY*dt
 end
 
+function Ball:flipVertDir()
+    self.speedY = self.speedY * -1
+end
+
+function Ball:flipHorDir()
+    self.speedX = self.speedX * -1
+end
+
+function Ball:handleCollision()
+    self:flipHorDir()
+    self.speedX = self.speedX * 1.1
+    self.speedY = math.random(-100,100)
+end
+
 return Ball

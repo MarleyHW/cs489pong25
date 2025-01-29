@@ -19,6 +19,8 @@ function love.load()
     player2 = Player(windowWidth-35)
     ball = Ball()
 
+    soundHit = love.audio.newSource("sounds/Blip_Select.wav","static")
+    soundScore = love.audio.newSource("sounds/Pickup_Coin.wav","static")
 end
 
 -- Update our variables in the game loop
@@ -46,6 +48,23 @@ function love.update(dt)
         elseif ball.x > windowWidth then
             player1:scoreUp()
             ball:reset()
+        end
+
+        if ball.y <= 20 then -- ball hit the top wall
+            ball:flipVertDir()
+        elseif ball.y >= windowHeight-20 then 
+            -- ball hit bottom wall
+            ball:flipVertDir()
+        end
+
+        if player1:collision(ball) then
+            -- collision happened
+            ball:handleCollision()
+            soundHit:play()
+        elseif player2:collision(ball) then
+            -- collision with p2
+            ball:handleCollision()
+            soundHit:play()
         end
     end
 
