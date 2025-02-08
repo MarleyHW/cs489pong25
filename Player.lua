@@ -1,5 +1,5 @@
 local Class = require "hump.class"
-
+local Max_Score = 5
 local Player = Class{}
 function Player:init(x) --constructor
     self.x = x
@@ -27,6 +27,10 @@ end
 function Player:scoreUp()
     self.score = self.score+1
     soundScore:play()
+    if self.score >= Max_Score then
+        winner = self
+        gameState = "done"
+    end
 end
 
 function Player:collision(ball)
